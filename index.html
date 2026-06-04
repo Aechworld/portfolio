@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Your Name</title>
+  <title>Nikhil Shah</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
@@ -11,50 +11,17 @@
 </head>
 <body>
 
-<label class="theme-toggle" title="Toggle dark mode">
-  <input type="checkbox" id="theme-chk">
-  <span class="theme-track"><span class="theme-knob"></span></span>
-</label>
+<main class="bento" id="bento"></main>
 
-<div class="tab-bar">
-  <button class="tab-btn active" onclick="switchTab('projects')">Projects</button>
-  <button class="tab-btn" onclick="switchTab('cv')">CV</button>
+<div id="detail" class="detail" aria-hidden="true">
+  <div class="detail-panel">
+    <button class="detail-close" onclick="closeDetail()">close ×</button>
+    <div id="detail-body"></div>
+  </div>
 </div>
 
-<div class="cols">
-
-  <div class="col-l">
-    <div class="col-l-head">
-      <span>Nikhil Shah</span>
-      <div class="col-l-links">
-        <a onclick="goTop()">Index</a>
-        <a href="sandbox.html">Sandbox</a>
-        <a href="mailto:shahniku2004@gmail.com">Email</a>
-        <a href="https://www.instagram.com" target="_blank">Instagram</a>
-      </div>
-    </div>
-    <div id="sheet"></div>
-    <div class="nav-arrows" id="nav-arrows">
-      <button class="nav-arrow" id="nav-down" onclick="navigateProject(1)">↓ next</button>
-      <button class="nav-arrow" id="nav-up" onclick="navigateProject(-1)">↑ previous</button>
-    </div>
-  </div>
-
-  <div class="col-r">
-
-    <div id="cv-body"></div>
-
-    <div id="proj-detail">
-      <span class="pd-close" onclick="closeDetail()">close ×</span>
-      <div id="pd-sections"></div>
-    </div>
-
-  </div>
-
-</div>
-
-<div id="pd-zoom" class="pd-zoom-overlay" onclick="closeZoom()">
-  <img id="pd-zoom-img" src="" alt="">
+<div id="zoom" class="zoom" onclick="closeZoom()">
+  <img id="zoom-img" src="" alt="">
 </div>
 
 <script src="script.js"></script>

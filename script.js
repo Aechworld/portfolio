@@ -1,32 +1,39 @@
 const projects = {
   p01: {
-    num:'01', label:'Ministry of Misconduct', date:'March 2026 — In Progress',
-    slug: 'ministry-of-misconduct',
-    categories:['Game','p5.js','Satire','Solo'],
-    context:'A p5.js browser game where you play the powerful person and your job is to maintain corruption, not fight it. Inversion is the point — it should be felt, not explained.',
-    hero: 'Content/Project%201/Ministry%20of%20misconduct%20gameplay%20.gif',
-    thumbs: ['Content/Project%201/Keyshots/thumb-1.png','Content/Project%201/Keyshots/thumb-2.png','Content/Project%201/Keyshots/thumb-3.png'],
+    label:'Ministry of Misconduct', date:'2026', status:'In Progress', feature:true,
+    slug:'ministry-of-misconduct',
+    categories:['Game','p5.js','Satire'],
+    context:'A browser game where you play the powerful person and your job is to maintain corruption, not fight it. Inversion is the point — felt, not explained.',
+    hero:'Content/Project%201/Ministry%20of%20misconduct%20gameplay%20.gif',
   },
   p02: {
+<<<<<<< Updated upstream
     num:'02', label:'Ghar Jo Hum Piche Chhod Aaye', date:'2024',
     slug: 'ghar-jo-hum-piche-chhod-aaye',
     categories:['VR','Installation','Physical Computing','Immersive'],
     context:'A multisensory VR and physical-space installation set in a single kitchen on the day Partition news breaks, experienced through the body of an unsupervised child looking for a lost toy.',
     hero: '',
     thumbs: [],
+=======
+    label:'Ghar Jo Hum Piche Chhod Aaye', date:'2024',
+    slug:'ghar-jo-hum-piche-chhod-aaye',
+    categories:['VR','Installation','Immersive'],
+    context:'A multisensory VR and physical-space installation set in a single kitchen the day Partition news breaks, experienced through the body of a child.',
+    hero:'Content/Ghar%20jo%20hum%20piche%20chhod%20aaye/GJHPCA.png',
+>>>>>>> Stashed changes
   },
   p03: {
-    num:'03', label:'C-Pill', date:'',
-    slug: 'untitled-nikhil',
-    categories:['Speculative','Critical Design','Political Philosophy'],
-    context:'Each party\'s manifesto is a "pill" that grants complete knowledge of that party — but consuming it disqualifies you from voting for them. Full knowledge cancels belief.',
-    hero: 'Content/C-Pill/C-Pill%20speculation%20.jpg',
-    thumbs: [],
+    label:'C-Pill', date:'',
+    slug:'untitled-nikhil',
+    categories:['Speculative','Critical Design'],
+    context:'Each party\'s manifesto is a “pill” granting complete knowledge of that party — but consuming it disqualifies you from voting for them.',
+    hero:'Content/C-Pill/C-Pill%20speculation%20.jpg',
   },
   p04: {
-    num:'04', label:'Hum Panchi Umukt Gagan Ke', date:'',
-    slug: 'hum-panchi-umukt-gagan-ke',
+    label:'Hum Panchi Umukt Gagan Ke', date:'',
+    slug:'hum-panchi-umukt-gagan-ke',
     categories:['Narrative','Animation','Film'],
+<<<<<<< Updated upstream
     context:'A video poem adapting Shiv Mangal Singh Suman\'s Hindi poem into a puppeteering-style animated short — full solo pipeline: narration, storyboard, assets, sound design, final video.',
     hero: '',
     thumbs: [],
@@ -56,291 +63,204 @@ const cvBody     = document.getElementById('cv-body');
 const projDetail = document.getElementById('proj-detail');
 const isMobile   = () => window.innerWidth < 768;
 const imgIdx     = {};
+=======
+    context:'A video poem adapting Shiv Mangal Singh Suman’s Hindi poem into a puppeteering-style animated short — full solo pipeline.',
+    hero:'Content/Hum%20Panchi%20Umukt%20Gagan%20Ke/HPUMGk.png',
+  },
+  p05: {
+    label:'Zepto Satire', date:'',
+    slug:'zepto-satire',
+    categories:['Interaction','Data Viz'],
+    context:'A functional dummy app mimicking Zepto’s ordering flow that, instead of food, surfaces data on gig-workers’ health under Delhi’s AQI.',
+    hero:'Content/Zupto/Screenshot%20(99).png',
+  },
+};
 
-function getAllImages(id) {
-  const p = projects[id];
-  const imgs = [];
-  if (p.hero) imgs.push(p.hero);
-  (p.thumbs || []).forEach(t => { if (t) imgs.push(t); });
-  return imgs;
-}
+const order = ['p01','p02','p03','p04','p05'];
+const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+let originEl = null;       // tile the detail opened from
+let currentImg = '';       // its background-image, reused on close
+>>>>>>> Stashed changes
 
-function swapHero(e, id, src) {
-  e.stopPropagation();
-  const big = document.querySelector(`.pblock[data-id="${id}"] .pb-big`);
-  let img = big.querySelector('img');
-  if (!img) { img = document.createElement('img'); big.appendChild(img); }
-  img.src = src;
-  big.style.backgroundImage = `url('${src}')`;
-  const idx = getAllImages(id).indexOf(src);
-  if (idx !== -1) imgIdx[id] = idx;
-  updateActiveThumb(id, src);
-}
+function buildBento() {
+  const intro = `
+    <section class="tile tile-intro" style="grid-area:intro; --i:0">
+      <div>
+        <div class="intro-name">Nikhil Shah</div>
+        <p class="intro-role">Interaction designer working across story, games, research, satire &amp; speculation. Selected work below.</p>
+      </div>
+      <div class="intro-bottom">
+        <div class="intro-links">
+          <a href="mailto:shahniku2004@gmail.com">Email</a>
+          <a href="Content/Nikhil_Resume.pdf" target="_blank">CV</a>
+          <a href="sandbox.html">Sandbox</a>
+          <a href="https://www.instagram.com" target="_blank">Instagram</a>
+        </div>
+        <label class="theme-toggle" title="Toggle dark mode">
+          <input type="checkbox" id="theme-chk">
+          <span class="theme-track"><span class="theme-knob"></span></span>
+        </label>
+      </div>
+    </section>`;
 
-function initDrag(bigEl, id) {
-  let startX = 0, lastX = 0, active = false, didDrag = false;
-  const THRESHOLD = 50;
-
-  bigEl.addEventListener('pointerdown', e => {
-    startX = lastX = e.clientX;
-    active = true;
-    didDrag = false;
-    bigEl.setPointerCapture(e.pointerId);
-    bigEl.style.cursor = 'grabbing';
-  });
-
-  bigEl.addEventListener('pointermove', e => {
-    if (!active) return;
-    lastX = e.clientX;
-    const dx = lastX - startX;
-    if (Math.abs(dx) > 6) didDrag = true;
-    if (didDrag) {
-      const clamped = Math.sign(dx) * Math.min(Math.abs(dx) * 0.14, 22);
-      const img = bigEl.querySelector('img');
-      if (img) img.style.transform = `translateX(${clamped}px)`;
-    }
-  });
-
-  bigEl.addEventListener('pointerup', e => {
-    if (!active) return;
-    active = false;
-    bigEl.style.cursor = '';
-    const dx = lastX - startX;
-    const img = bigEl.querySelector('img');
-
-    if (didDrag && Math.abs(dx) >= THRESHOLD) {
-      const dir = dx < 0 ? 1 : -1;
-      const imgs = getAllImages(id);
-      if (imgs.length > 1) {
-        imgIdx[id] = ((imgIdx[id] || 0) + dir + imgs.length) % imgs.length;
-        const src = imgs[imgIdx[id]];
-        if (img) {
-          img.style.transition = 'opacity 0.13s, transform 0.13s';
-          img.style.opacity = '0';
-          img.style.transform = `translateX(${Math.sign(dx) * -28}px)`;
-          setTimeout(() => {
-            img.src = src;
-            bigEl.style.backgroundImage = `url('${src}')`;
-            updateActiveThumb(id, src);
-            img.style.transition = 'none';
-            img.style.transform = `translateX(${Math.sign(dx) * 28}px)`;
-            img.style.opacity = '0';
-            requestAnimationFrame(() => requestAnimationFrame(() => {
-              img.style.transition = 'opacity 0.18s, transform 0.18s';
-              img.style.opacity = '1';
-              img.style.transform = 'translateX(0)';
-              setTimeout(() => { img.style.transition = ''; }, 180);
-            }));
-          }, 130);
-        } else {
-          bigEl.style.backgroundImage = `url('${src}')`;
-        }
-      }
-    } else if (img) {
-      img.style.transition = 'transform 0.2s';
-      img.style.transform = 'translateX(0)';
-      setTimeout(() => { img.style.transition = ''; }, 200);
-    }
-  });
-
-  bigEl.addEventListener('pointercancel', () => {
-    active = false;
-    bigEl.style.cursor = '';
-    const img = bigEl.querySelector('img');
-    if (img) {
-      img.style.transition = 'transform 0.2s';
-      img.style.transform = 'translateX(0)';
-      setTimeout(() => { img.style.transition = ''; }, 200);
-    }
-  });
-
-  bigEl.addEventListener('click', e => {
-    if (Math.abs(lastX - startX) > 8) e.stopPropagation();
-  });
-}
-
-function buildSheet() {
-  let h = '';
-  keys.forEach(k => {
+  const tiles = order.map((k, i) => {
     const p = projects[k];
-    const heroImg = p.hero ? `<img src="${p.hero}" alt="${p.label}">` : '';
-    const thumbsHtml = getAllImages(k).map((src, i) =>
-      `<div class="pb-thumb${i === 0 ? ' active' : ''}" data-src="${src}" style="background-image:url('${src}')" onclick="swapHero(event,'${k}','${src}')"><img src="${src}" alt=""></div>`
-    ).join('');
-    const cats = (p.categories || []).join('<br>');
-    h += `<div class="pblock" data-id="${k}" onclick="pick('${k}')">
-      <div class="pb-meta">
-        <div class="pb-title">${p.label}</div>
-        <div class="pb-date">${p.date}</div>
-      </div>
-      <div class="pb-big"${p.hero ? ` style="background-image:url('${p.hero}')"` : ''}>${heroImg}</div>
-      <div class="pb-cats">${cats}</div>
-      <div class="pb-row2">
-        <div class="pb-thumbs">${thumbsHtml}</div>
-        <div class="pb-context">${p.context || ''}</div>
-      </div>
-    </div>`;
-  });
-  document.getElementById('sheet').innerHTML = h;
-  keys.forEach(k => {
-    const big = document.querySelector(`.pblock[data-id="${k}"] .pb-big`);
-    if (big) initDrag(big, k);
-  });
+    const num = String(i + 1).padStart(2, '0');
+    const cats = (p.categories || []).join(' · ');
+    return `
+      <a class="tile tile-proj${p.feature ? ' tile-feature' : ''}"
+         style="grid-area:${k}; --i:${i + 1}"
+         onclick="openDetail(event,'${k}')">
+        <div class="tile-img" style="background-image:url('${p.hero}')"></div>
+        <span class="tile-num">${num}</span>
+        ${p.status ? `<span class="tile-status">${p.status}</span>` : ''}
+        <div class="tile-foot">
+          <div class="tile-title">${p.label}</div>
+          <div class="tile-cats">${cats}${p.date ? ' — ' + p.date : ''}</div>
+          <div class="tile-context">${p.context || ''}</div>
+        </div>
+      </a>`;
+  }).join('');
+
+  document.getElementById('bento').innerHTML = intro + tiles;
+  initTheme();
 }
 
-async function populate(id) {
+function makeFlipHero(rect, img) {
+  const hero = document.createElement('div');
+  hero.className = 'flip-hero';
+  hero.style.backgroundImage = img;
+  hero.style.left = rect.left + 'px';
+  hero.style.top = rect.top + 'px';
+  hero.style.width = rect.width + 'px';
+  hero.style.height = rect.height + 'px';
+  document.body.appendChild(hero);
+  return hero;
+}
+
+async function openDetail(e, id) {
+  const tile = e.currentTarget;
+  originEl = tile;
+  currentImg = tile.querySelector('.tile-img').style.backgroundImage;
+
   const p = projects[id];
-  const container = document.getElementById('pd-sections');
-  container.innerHTML = '';
-  try {
-    const res = await fetch(`Content/${p.slug}.html`);
-    if (!res.ok) throw new Error(res.status);
-    container.innerHTML = await res.text();
-  } catch (e) {
-    console.error('Failed to load case study:', e);
-  }
-}
+  const body = document.getElementById('detail-body');
+  const d = document.getElementById('detail');
+  const panel = d.querySelector('.detail-panel');
 
-function updateActiveThumb(id, src) {
-  document.querySelectorAll(`.pblock[data-id="${id}"] .pb-thumb`)
-    .forEach(t => t.classList.toggle('active', t.dataset.src === src));
-}
+  body.innerHTML = '';
+  // load case study in parallel with the animation
+  fetch(`Content/${p.slug}.html`)
+    .then(r => { if (!r.ok) throw new Error(r.status); return r.text(); })
+    .then(html => { body.innerHTML = html; })
+    .catch(() => { body.innerHTML = `<h3 style="font-size:16px">${p.label}</h3><p>${p.context || ''}</p>`; });
 
-function openZoom(src) {
-  document.getElementById('pd-zoom-img').src = src;
-  document.getElementById('pd-zoom').style.display = 'flex';
-}
+  document.body.style.overflow = 'hidden';
 
-function closeZoom() {
-  const el = document.getElementById('pd-zoom');
-  if (el) el.style.display = 'none';
-}
-
-function navigateProject(dir) {
-  const newIdx = snapIdx + dir;
-  if (newIdx < 0 || newIdx >= keys.length) return;
-  snapIdx = newIdx;
-  const id = keys[newIdx];
-  if (document.body.classList.contains('detail-open')) {
-    pick(id);
-  } else {
-    const pblocks = document.querySelectorAll('.pblock');
-    if (pblocks[newIdx]) pblocks[newIdx].scrollIntoView({ behavior: 'smooth', block: 'start' });
-  }
-  updateNavArrows();
-}
-
-function updateNavArrows() {
-  const up = document.getElementById('nav-up');
-  const down = document.getElementById('nav-down');
-  if (!up || !down) return;
-  up.classList.toggle('hidden', snapIdx === 0);
-  down.classList.toggle('hidden', snapIdx === keys.length - 1);
-}
-
-function initSnapObserver() {
-  const sheet = document.getElementById('sheet');
-  const observer = new IntersectionObserver(entries => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        const idx = keys.indexOf(entry.target.dataset.id);
-        if (idx !== -1) { snapIdx = idx; updateNavArrows(); }
-      }
-    });
-  }, { root: sheet, threshold: 0.5 });
-  document.querySelectorAll('.pblock').forEach(b => observer.observe(b));
-}
-
-function pick(id) {
-  if (cur === id) return;
-  cur = id;
-  snapIdx = keys.indexOf(id);
-  updateNavArrows();
-  populate(id);
-  document.querySelectorAll('.pblock').forEach(el => el.classList.remove('active'));
-  document.querySelector(`.pblock[data-id="${id}"]`).classList.add('active');
-  document.body.classList.add('detail-open');
-
-  if (isMobile()) {
-    cvBody.style.display = 'none';
-    projDetail.style.cssText = 'display:block; opacity:1; transform:translateX(0);';
+  if (reduceMotion) {
+    d.classList.add('open');
+    panel.scrollTop = 0;
     return;
   }
 
-  cvBody.style.transition = 'opacity 0.2s ease, transform 0.24s ease';
-  cvBody.style.opacity = '0';
-  cvBody.style.transform = 'translateX(20px)';
-  setTimeout(() => {
-    cvBody.style.display = 'none';
-    projDetail.style.cssText = 'display:block; transition:none; opacity:0; transform:translateX(14px);';
-    requestAnimationFrame(() => requestAnimationFrame(() => {
-      projDetail.style.transition = 'opacity 0.22s ease, transform 0.26s ease';
-      projDetail.style.opacity = '1';
-      projDetail.style.transform = 'translateX(0)';
-    }));
-  }, 210);
+  // FLIP: clone tile image, grow it into the panel's footprint
+  d.classList.add('open', 'animating');     // backdrop in, panel hidden
+  const from = tile.getBoundingClientRect();
+  const to = panel.getBoundingClientRect();
+  const hero = makeFlipHero(from, currentImg);
+
+  requestAnimationFrame(() => {
+    hero.style.transition = 'top .5s var(--ease-io), left .5s var(--ease-io), width .5s var(--ease-io), height .5s var(--ease-io)';
+    hero.style.left = to.left + 'px';
+    hero.style.top = to.top + 'px';
+    hero.style.width = to.width + 'px';
+    hero.style.height = to.height + 'px';
+  });
+
+  const finish = () => {
+    panel.scrollTop = 0;
+    d.classList.remove('animating');         // panel + content fade in
+    hero.classList.add('fade');
+    setTimeout(() => hero.remove(), 300);
+  };
+  hero.addEventListener('transitionend', finish, { once: true });
+  setTimeout(finish, 650);                    // safety fallback
 }
 
 function closeDetail() {
-  cur = null;
-  document.body.classList.remove('detail-open');
-  document.querySelectorAll('.pblock').forEach(el => el.classList.remove('active'));
-  document.getElementById('pd-sections').innerHTML = '';
+  const d = document.getElementById('detail');
+  if (!d.classList.contains('open')) return;
+  const panel = d.querySelector('.detail-panel');
 
-  if (isMobile()) {
-    projDetail.style.cssText = 'display:none;';
-    cvBody.style.cssText = '';
+  if (reduceMotion || !originEl) {
+    d.classList.remove('open');
+    document.body.style.overflow = '';
     return;
   }
 
-  projDetail.style.transition = 'opacity 0.2s ease, transform 0.24s ease';
-  projDetail.style.opacity = '0';
-  projDetail.style.transform = 'translateX(20px)';
-  setTimeout(() => {
-    projDetail.style.display = 'none';
-    cvBody.style.cssText = 'display:block; transition:none; opacity:0; transform:translateX(-10px);';
-    requestAnimationFrame(() => requestAnimationFrame(() => {
-      cvBody.style.transition = 'opacity 0.22s ease, transform 0.26s ease';
-      cvBody.style.opacity = '1';
-      cvBody.style.transform = 'translateX(0)';
-    }));
-  }, 210);
+  // FLIP back: shrink a hero from the panel footprint to the origin tile
+  const from = panel.getBoundingClientRect();
+  d.classList.add('animating');               // hide panel immediately
+  const to = originEl.getBoundingClientRect();
+  const hero = makeFlipHero(from, currentImg);
+
+  requestAnimationFrame(() => {
+    hero.style.transition = 'top .42s var(--ease-io), left .42s var(--ease-io), width .42s var(--ease-io), height .42s var(--ease-io)';
+    hero.style.left = to.left + 'px';
+    hero.style.top = to.top + 'px';
+    hero.style.width = to.width + 'px';
+    hero.style.height = to.height + 'px';
+  });
+
+  d.classList.remove('open');                 // backdrop fades out alongside
+  const done = () => {
+    hero.classList.add('fade');
+    setTimeout(() => hero.remove(), 300);
+    d.classList.remove('animating');
+    document.body.style.overflow = '';
+  };
+  hero.addEventListener('transitionend', done, { once: true });
+  setTimeout(done, 560);
 }
 
-function switchTab(tab) {
-  document.querySelectorAll('.tab-btn').forEach(btn =>
-    btn.classList.toggle('active', btn.textContent.toLowerCase() === tab)
-  );
-  document.body.classList.toggle('show-cv', tab === 'cv');
+function openZoom(src) {
+  const z = document.getElementById('zoom');
+  document.getElementById('zoom-img').src = src;
+  z.classList.add('show');
+}
+function closeZoom() {
+  document.getElementById('zoom').classList.remove('show');
 }
 
-function goTop() {
-  if (isMobile()) switchTab('projects');
-  window.scrollTo({ top: 0, behavior: 'smooth' });
+function initTheme() {
+  const chk = document.getElementById('theme-chk');
+  if (!chk) return;
+  if (localStorage.getItem('theme') === 'dark') {
+    document.body.classList.add('dark');
+    chk.checked = true;
+  }
+  chk.addEventListener('change', function () {
+    document.body.classList.toggle('dark', this.checked);
+    localStorage.setItem('theme', this.checked ? 'dark' : 'light');
+  });
 }
 
-document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeZoom(); closeDetail(); } });
-
-const themeChk = document.getElementById('theme-chk');
-if (localStorage.getItem('theme') === 'dark') {
-  document.body.classList.add('dark');
-  themeChk.checked = true;
-}
-themeChk.addEventListener('change', function() {
-  document.body.classList.toggle('dark', this.checked);
-  localStorage.setItem('theme', this.checked ? 'dark' : 'light');
+// close on background click of detail overlay
+document.getElementById('detail').addEventListener('click', e => {
+  if (e.target.id === 'detail') closeDetail();
 });
 
-buildSheet();
-initSnapObserver();
-updateNavArrows();
-
-document.getElementById('pd-sections').addEventListener('click', e => {
+// zoom case-study images
+document.getElementById('detail-body').addEventListener('click', e => {
   const img = e.target.closest('.pd-imgs img');
   if (img) { e.stopPropagation(); openZoom(img.src); }
 });
 
-fetch('Content/cv.html')
-  .then(r => r.text())
-  .then(html => { document.getElementById('cv-body').innerHTML = html; })
-  .catch(e => console.error('Failed to load CV:', e));
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    if (document.getElementById('zoom').classList.contains('show')) closeZoom();
+    else closeDetail();
+  }
+});
+
+buildBento();
