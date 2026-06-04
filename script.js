@@ -12,8 +12,14 @@ const projects = {
     slug: 'ghar-jo-hum-piche-chhod-aaye',
     categories:['VR','Installation','Physical Computing','Immersive'],
     context:'A multisensory VR and physical-space installation set in a single kitchen on the day Partition news breaks, experienced through the body of an unsupervised child looking for a lost toy.',
-    hero: '',
-    thumbs: [],
+    hero: 'Content/Ghar%20jo%20hum%20piche%20chhod%20aaye/GJHPCA.png',
+    thumbs: [
+      'Content/Ghar%20jo%20hum%20piche%20chhod%20aaye/Hero%20images/Screenshot%202026-05-17%20184715.png',
+      'Content/Ghar%20jo%20hum%20piche%20chhod%20aaye/Hero%20images/Screenshot%202026-05-17%20184947.png',
+      'Content/Ghar%20jo%20hum%20piche%20chhod%20aaye/Hero%20images/Screenshot%202026-05-17%20184830.png',
+      'Content/Ghar%20jo%20hum%20piche%20chhod%20aaye/Hero%20images/7.jpeg',
+      'Content/Ghar%20jo%20hum%20piche%20chhod%20aaye/Hero%20images/10.jpeg',
+    ],
   },
   p03: {
     num:'03', label:'C-Pill', date:'',
@@ -28,28 +34,26 @@ const projects = {
     slug: 'hum-panchi-umukt-gagan-ke',
     categories:['Narrative','Animation','Film'],
     context:'A video poem adapting Shiv Mangal Singh Suman\'s Hindi poem into a puppeteering-style animated short — full solo pipeline: narration, storyboard, assets, sound design, final video.',
-    hero: '',
-    thumbs: [],
+    hero: 'Content/Hum%20Panchi%20Umukt%20Gagan%20Ke/HPUMGk.png',
+    thumbs: [
+      'Content/Hum%20Panchi%20Umukt%20Gagan%20Ke/Screenshot%20(95).png',
+      'Content/Hum%20Panchi%20Umukt%20Gagan%20Ke/Screenshot%20(97).png',
+      'Content/Hum%20Panchi%20Umukt%20Gagan%20Ke/Screenshot%20(96).png',
+      'Content/Hum%20Panchi%20Umukt%20Gagan%20Ke/Screenshot%20(94).png',
+      'Content/Hum%20Panchi%20Umukt%20Gagan%20Ke/Screenshot%20(98).png',
+    ],
   },
   p05: {
     num:'05', label:'Zepto Satire', date:'',
     slug: 'zepto-satire',
     categories:['Interaction Design','Data Viz','Critique'],
     context:'A functional dummy app that mimics Zepto\'s ordering flow but, instead of food, surfaces data about gig-workers\' health under Delhi\'s high AQI — interaction-as-critique.',
-    hero: '',
-    thumbs: [],
-  },
-  p06: {
-    num:'06', label:'Fledge', date:'',
-    slug: 'fledge',
-    categories:['Narrative','Comic','Education'],
-    context:'A bird-themed educational comic about breaking routine and facing challenges.',
-    hero: '',
+    hero: 'Content/Zupto/Screenshot%20(99).png',
     thumbs: [],
   },
 };
 
-const keys = ['p01','p02','p03','p04','p05','p06'];
+const keys = ['p01','p02','p03','p04','p05'];
 let cur = null;
 let snapIdx = 0;
 const cvBody     = document.getElementById('cv-body');
