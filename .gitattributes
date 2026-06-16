@@ -1,0 +1,7 @@
+# Normalize line endings so diffs/merges across layout branches stay clean
+* text=auto eol=lf
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.pdf binary
