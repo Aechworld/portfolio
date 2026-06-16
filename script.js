@@ -1,350 +1,105 @@
+// ── Shared project data ──
 const projects = {
   p01: {
-    num:'01', label:'Ministry of Misconduct', date:'March 2026 — In Progress',
+    title: 'Ministry of Misconduct',
+    date: 'March 2026 — In Progress',
+    categories: ['Game', 'p5.js', 'Satire', 'Solo'],
     slug: 'ministry-of-misconduct',
-    categories:['Game','p5.js','Satire','Solo'],
-    context:'A p5.js browser game where you play the powerful person and your job is to maintain corruption, not fight it. Inversion is the point — it should be felt, not explained.',
     hero: 'Content/Project%201/Ministry%20of%20misconduct%20gameplay%20.gif',
-    thumbs: ['Content/Project%201/Keyshots/thumb-1.png','Content/Project%201/Keyshots/thumb-2.png','Content/Project%201/Keyshots/thumb-3.png'],
   },
   p02: {
-    num:'02', label:'Ghar Jo Hum Piche Chhod Aaye', date:'2024',
+    title: 'Ghar Jo Hum Piche Chhod Aaye',
+    date: '2024',
+    categories: ['VR', 'Installation', 'Physical Computing', 'Immersive'],
     slug: 'ghar-jo-hum-piche-chhod-aaye',
-    categories:['VR','Installation','Physical Computing','Immersive'],
-    context:'A multisensory VR and physical-space installation set in a single kitchen on the day Partition news breaks, experienced through the body of an unsupervised child looking for a lost toy.',
     hero: 'Content/Ghar%20jo%20hum%20piche%20chhod%20aaye/GJHPCA.png',
-    thumbs: [
-      'Content/Ghar%20jo%20hum%20piche%20chhod%20aaye/Hero%20images/Screenshot%202026-05-17%20184715.png',
-      'Content/Ghar%20jo%20hum%20piche%20chhod%20aaye/Hero%20images/Screenshot%202026-05-17%20184947.png',
-      'Content/Ghar%20jo%20hum%20piche%20chhod%20aaye/Hero%20images/Screenshot%202026-05-17%20184830.png',
-      'Content/Ghar%20jo%20hum%20piche%20chhod%20aaye/Hero%20images/7.jpeg',
-      'Content/Ghar%20jo%20hum%20piche%20chhod%20aaye/Hero%20images/10.jpeg',
-    ],
   },
   p03: {
-    num:'03', label:'C-Pill', date:'',
+    title: 'C-Pill',
+    date: '',
+    categories: ['Speculative', 'Critical Design', 'Political Philosophy'],
     slug: 'untitled-nikhil',
-    categories:['Speculative','Critical Design','Political Philosophy'],
-    context:'Each party\'s manifesto is a "pill" that grants complete knowledge of that party — but consuming it disqualifies you from voting for them. Full knowledge cancels belief.',
     hero: 'Content/C-Pill/C-Pill%20speculation%20.jpg',
-    thumbs: [],
   },
   p04: {
-    num:'04', label:'Hum Panchi Umukt Gagan Ke', date:'',
+    title: 'Hum Panchi Umukt Gagan Ke',
+    date: '',
+    categories: ['Narrative', 'Animation', 'Film'],
     slug: 'hum-panchi-umukt-gagan-ke',
-    categories:['Narrative','Animation','Film'],
-    context:'A video poem adapting Shiv Mangal Singh Suman\'s Hindi poem into a puppeteering-style animated short — full solo pipeline: narration, storyboard, assets, sound design, final video.',
     hero: 'Content/Hum%20Panchi%20Umukt%20Gagan%20Ke/HPUMGk.png',
-    thumbs: [
-      'Content/Hum%20Panchi%20Umukt%20Gagan%20Ke/Screenshot%20(95).png',
-      'Content/Hum%20Panchi%20Umukt%20Gagan%20Ke/Screenshot%20(97).png',
-      'Content/Hum%20Panchi%20Umukt%20Gagan%20Ke/Screenshot%20(96).png',
-      'Content/Hum%20Panchi%20Umukt%20Gagan%20Ke/Screenshot%20(94).png',
-      'Content/Hum%20Panchi%20Umukt%20Gagan%20Ke/Screenshot%20(98).png',
-    ],
   },
   p05: {
-    num:'05', label:'Zepto Satire', date:'',
+    title: 'Zepto Satire',
+    date: '',
+    categories: ['Interaction Design', 'Data Viz', 'Critique'],
     slug: 'zepto-satire',
-    categories:['Interaction Design','Data Viz','Critique'],
-    context:'A functional dummy app that mimics Zepto\'s ordering flow but, instead of food, surfaces data about gig-workers\' health under Delhi\'s high AQI — interaction-as-critique.',
     hero: 'Content/Zupto/Screenshot%20(99).png',
-    thumbs: [],
   },
 };
 
-const keys = ['p01','p02','p03','p04','p05'];
-let cur = null;
-let snapIdx = 0;
-const cvBody     = document.getElementById('cv-body');
-const projDetail = document.getElementById('proj-detail');
-const isMobile   = () => window.innerWidth < 768;
-const imgIdx     = {};
-
-function getAllImages(id) {
-  const p = projects[id];
-  const imgs = [];
-  if (p.hero) imgs.push(p.hero);
-  (p.thumbs || []).forEach(t => { if (t) imgs.push(t); });
-  return imgs;
-}
-
-function swapHero(e, id, src) {
-  e.stopPropagation();
-  const big = document.querySelector(`.pblock[data-id="${id}"] .pb-big`);
-  let img = big.querySelector('img');
-  if (!img) { img = document.createElement('img'); big.appendChild(img); }
-  img.src = src;
-  big.style.backgroundImage = `url('${src}')`;
-  const idx = getAllImages(id).indexOf(src);
-  if (idx !== -1) imgIdx[id] = idx;
-  updateActiveThumb(id, src);
-}
-
-function initDrag(bigEl, id) {
-  let startX = 0, lastX = 0, active = false, didDrag = false;
-  const THRESHOLD = 50;
-
-  bigEl.addEventListener('pointerdown', e => {
-    startX = lastX = e.clientX;
-    active = true;
-    didDrag = false;
-    bigEl.setPointerCapture(e.pointerId);
-    bigEl.style.cursor = 'grabbing';
-  });
-
-  bigEl.addEventListener('pointermove', e => {
-    if (!active) return;
-    lastX = e.clientX;
-    const dx = lastX - startX;
-    if (Math.abs(dx) > 6) didDrag = true;
-    if (didDrag) {
-      const clamped = Math.sign(dx) * Math.min(Math.abs(dx) * 0.14, 22);
-      const img = bigEl.querySelector('img');
-      if (img) img.style.transform = `translateX(${clamped}px)`;
-    }
-  });
-
-  bigEl.addEventListener('pointerup', e => {
-    if (!active) return;
-    active = false;
-    bigEl.style.cursor = '';
-    const dx = lastX - startX;
-    const img = bigEl.querySelector('img');
-
-    if (didDrag && Math.abs(dx) >= THRESHOLD) {
-      const dir = dx < 0 ? 1 : -1;
-      const imgs = getAllImages(id);
-      if (imgs.length > 1) {
-        imgIdx[id] = ((imgIdx[id] || 0) + dir + imgs.length) % imgs.length;
-        const src = imgs[imgIdx[id]];
-        if (img) {
-          img.style.transition = 'opacity 0.13s, transform 0.13s';
-          img.style.opacity = '0';
-          img.style.transform = `translateX(${Math.sign(dx) * -28}px)`;
-          setTimeout(() => {
-            img.src = src;
-            bigEl.style.backgroundImage = `url('${src}')`;
-            updateActiveThumb(id, src);
-            img.style.transition = 'none';
-            img.style.transform = `translateX(${Math.sign(dx) * 28}px)`;
-            img.style.opacity = '0';
-            requestAnimationFrame(() => requestAnimationFrame(() => {
-              img.style.transition = 'opacity 0.18s, transform 0.18s';
-              img.style.opacity = '1';
-              img.style.transform = 'translateX(0)';
-              setTimeout(() => { img.style.transition = ''; }, 180);
-            }));
-          }, 130);
-        } else {
-          bigEl.style.backgroundImage = `url('${src}')`;
-        }
-      }
-    } else if (img) {
-      img.style.transition = 'transform 0.2s';
-      img.style.transform = 'translateX(0)';
-      setTimeout(() => { img.style.transition = ''; }, 200);
-    }
-  });
-
-  bigEl.addEventListener('pointercancel', () => {
-    active = false;
-    bigEl.style.cursor = '';
-    const img = bigEl.querySelector('img');
-    if (img) {
-      img.style.transition = 'transform 0.2s';
-      img.style.transform = 'translateX(0)';
-      setTimeout(() => { img.style.transition = ''; }, 200);
-    }
-  });
-
-  bigEl.addEventListener('click', e => {
-    if (Math.abs(lastX - startX) > 8) e.stopPropagation();
-  });
-}
-
-function buildSheet() {
-  let h = '';
-  keys.forEach(k => {
-    const p = projects[k];
-    const heroImg = p.hero ? `<img src="${p.hero}" alt="${p.label}">` : '';
-    const thumbsHtml = getAllImages(k).map((src, i) =>
-      `<div class="pb-thumb${i === 0 ? ' active' : ''}" data-src="${src}" style="background-image:url('${src}')" onclick="swapHero(event,'${k}','${src}')"><img src="${src}" alt=""></div>`
-    ).join('');
-    const cats = (p.categories || []).join('<br>');
-    h += `<div class="pblock" data-id="${k}" onclick="pick('${k}')">
-      <div class="pb-meta">
-        <div class="pb-title">${p.label}</div>
-        <div class="pb-date">${p.date}</div>
-      </div>
-      <div class="pb-big"${p.hero ? ` style="background-image:url('${p.hero}')"` : ''}>${heroImg}</div>
-      <div class="pb-cats">${cats}</div>
-      <div class="pb-row2">
-        <div class="pb-thumbs">${thumbsHtml}</div>
-        <div class="pb-context">${p.context || ''}</div>
-      </div>
-    </div>`;
-  });
-  document.getElementById('sheet').innerHTML = h;
-  keys.forEach(k => {
-    const big = document.querySelector(`.pblock[data-id="${k}"] .pb-big`);
-    if (big) initDrag(big, k);
-  });
-}
-
-async function populate(id) {
-  const p = projects[id];
-  const container = document.getElementById('pd-sections');
-  container.innerHTML = '';
-  try {
-    const res = await fetch(`Content/${p.slug}.html`);
-    if (!res.ok) throw new Error(res.status);
-    container.innerHTML = await res.text();
-  } catch (e) {
-    console.error('Failed to load case study:', e);
+// ── Dark-mode toggle with persistence ──
+(function initTheme() {
+  const chk = document.getElementById('theme-chk');
+  if (!chk) return;
+  if (localStorage.getItem('theme') === 'dark') {
+    document.body.classList.add('dark');
+    chk.checked = true;
   }
-}
+  chk.addEventListener('change', function () {
+    document.body.classList.toggle('dark', this.checked);
+    localStorage.setItem('theme', this.checked ? 'dark' : 'light');
+  });
+})();
 
-function updateActiveThumb(id, src) {
-  document.querySelectorAll(`.pblock[data-id="${id}"] .pb-thumb`)
-    .forEach(t => t.classList.toggle('active', t.dataset.src === src));
-}
+// ── Case-study page ──
+(function initCase() {
+  const body = document.getElementById('case-body');
+  if (!body) return; // not the case template
 
-function openZoom(src) {
-  document.getElementById('pd-zoom-img').src = src;
-  document.getElementById('pd-zoom').style.display = 'flex';
-}
+  const id = new URLSearchParams(location.search).get('id');
+  const p = projects[id];
 
-function closeZoom() {
-  const el = document.getElementById('pd-zoom');
-  if (el) el.style.display = 'none';
-}
+  if (!p) {
+    body.innerHTML = '<p class="case-error">Project not found. <a href="index.html">Back to index</a>.</p>';
+    return;
+  }
 
-function navigateProject(dir) {
-  const newIdx = snapIdx + dir;
-  if (newIdx < 0 || newIdx >= keys.length) return;
-  snapIdx = newIdx;
-  const id = keys[newIdx];
-  if (document.body.classList.contains('detail-open')) {
-    pick(id);
+  document.title = p.title + ' — Nikhil Shah';
+  document.getElementById('case-title').textContent = p.title;
+  document.getElementById('case-meta').textContent =
+    p.categories.join(' · ') + (p.date ? '  —  ' + p.date : '');
+
+  const heroEl = document.getElementById('case-hero');
+  if (p.hero) {
+    heroEl.src = p.hero;
+    heroEl.alt = p.title;
   } else {
-    const pblocks = document.querySelectorAll('.pblock');
-    if (pblocks[newIdx]) pblocks[newIdx].scrollIntoView({ behavior: 'smooth', block: 'start' });
+    heroEl.remove();
   }
-  updateNavArrows();
-}
 
-function updateNavArrows() {
-  const up = document.getElementById('nav-up');
-  const down = document.getElementById('nav-down');
-  if (!up || !down) return;
-  up.classList.toggle('hidden', snapIdx === 0);
-  down.classList.toggle('hidden', snapIdx === keys.length - 1);
-}
-
-function initSnapObserver() {
-  const sheet = document.getElementById('sheet');
-  const observer = new IntersectionObserver(entries => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        const idx = keys.indexOf(entry.target.dataset.id);
-        if (idx !== -1) { snapIdx = idx; updateNavArrows(); }
-      }
+  fetch(`Content/${p.slug}.html`)
+    .then(r => { if (!r.ok) throw new Error(r.status); return r.text(); })
+    .then(html => { body.innerHTML = html; })
+    .catch(() => {
+      body.innerHTML = '<p class="case-error">Couldn\'t load this case study.</p>';
     });
-  }, { root: sheet, threshold: 0.5 });
-  document.querySelectorAll('.pblock').forEach(b => observer.observe(b));
+})();
+
+// ── Image zoom (lightbox) ──
+function openZoom(src) {
+  const z = document.getElementById('zoom');
+  if (!z) return;
+  document.getElementById('zoom-img').src = src;
+  z.classList.add('show');
 }
-
-function pick(id) {
-  if (cur === id) return;
-  cur = id;
-  snapIdx = keys.indexOf(id);
-  updateNavArrows();
-  populate(id);
-  document.querySelectorAll('.pblock').forEach(el => el.classList.remove('active'));
-  document.querySelector(`.pblock[data-id="${id}"]`).classList.add('active');
-  document.body.classList.add('detail-open');
-
-  if (isMobile()) {
-    cvBody.style.display = 'none';
-    projDetail.style.cssText = 'display:block; opacity:1; transform:translateX(0);';
-    return;
-  }
-
-  cvBody.style.transition = 'opacity 0.2s ease, transform 0.24s ease';
-  cvBody.style.opacity = '0';
-  cvBody.style.transform = 'translateX(20px)';
-  setTimeout(() => {
-    cvBody.style.display = 'none';
-    projDetail.style.cssText = 'display:block; transition:none; opacity:0; transform:translateX(14px);';
-    requestAnimationFrame(() => requestAnimationFrame(() => {
-      projDetail.style.transition = 'opacity 0.22s ease, transform 0.26s ease';
-      projDetail.style.opacity = '1';
-      projDetail.style.transform = 'translateX(0)';
-    }));
-  }, 210);
+function closeZoom() {
+  const z = document.getElementById('zoom');
+  if (z) z.classList.remove('show');
 }
-
-function closeDetail() {
-  cur = null;
-  document.body.classList.remove('detail-open');
-  document.querySelectorAll('.pblock').forEach(el => el.classList.remove('active'));
-  document.getElementById('pd-sections').innerHTML = '';
-
-  if (isMobile()) {
-    projDetail.style.cssText = 'display:none;';
-    cvBody.style.cssText = '';
-    return;
-  }
-
-  projDetail.style.transition = 'opacity 0.2s ease, transform 0.24s ease';
-  projDetail.style.opacity = '0';
-  projDetail.style.transform = 'translateX(20px)';
-  setTimeout(() => {
-    projDetail.style.display = 'none';
-    cvBody.style.cssText = 'display:block; transition:none; opacity:0; transform:translateX(-10px);';
-    requestAnimationFrame(() => requestAnimationFrame(() => {
-      cvBody.style.transition = 'opacity 0.22s ease, transform 0.26s ease';
-      cvBody.style.opacity = '1';
-      cvBody.style.transform = 'translateX(0)';
-    }));
-  }, 210);
-}
-
-function switchTab(tab) {
-  document.querySelectorAll('.tab-btn').forEach(btn =>
-    btn.classList.toggle('active', btn.textContent.toLowerCase() === tab)
-  );
-  document.body.classList.toggle('show-cv', tab === 'cv');
-}
-
-function goTop() {
-  if (isMobile()) switchTab('projects');
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-}
-
-document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeZoom(); closeDetail(); } });
-
-const themeChk = document.getElementById('theme-chk');
-if (localStorage.getItem('theme') === 'dark') {
-  document.body.classList.add('dark');
-  themeChk.checked = true;
-}
-themeChk.addEventListener('change', function() {
-  document.body.classList.toggle('dark', this.checked);
-  localStorage.setItem('theme', this.checked ? 'dark' : 'light');
-});
-
-buildSheet();
-initSnapObserver();
-updateNavArrows();
-
-document.getElementById('pd-sections').addEventListener('click', e => {
+document.addEventListener('click', e => {
   const img = e.target.closest('.pd-imgs img');
-  if (img) { e.stopPropagation(); openZoom(img.src); }
+  if (img) openZoom(img.src);
 });
-
-fetch('Content/cv.html')
-  .then(r => r.text())
-  .then(html => { document.getElementById('cv-body').innerHTML = html; })
-  .catch(e => console.error('Failed to load CV:', e));
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeZoom();
+});
