@@ -7,20 +7,11 @@ const projects = {
     hero:'Content/Project%201/Ministry%20of%20misconduct%20gameplay%20.gif',
   },
   p02: {
-<<<<<<< Updated upstream
-    num:'02', label:'Ghar Jo Hum Piche Chhod Aaye', date:'2024',
-    slug: 'ghar-jo-hum-piche-chhod-aaye',
-    categories:['VR','Installation','Physical Computing','Immersive'],
-    context:'A multisensory VR and physical-space installation set in a single kitchen on the day Partition news breaks, experienced through the body of an unsupervised child looking for a lost toy.',
-    hero: '',
-    thumbs: [],
-=======
     label:'Ghar Jo Hum Piche Chhod Aaye', date:'2024',
     slug:'ghar-jo-hum-piche-chhod-aaye',
     categories:['VR','Installation','Immersive'],
     context:'A multisensory VR and physical-space installation set in a single kitchen the day Partition news breaks, experienced through the body of a child.',
     hero:'Content/Ghar%20jo%20hum%20piche%20chhod%20aaye/GJHPCA.png',
->>>>>>> Stashed changes
   },
   p03: {
     label:'C-Pill', date:'',
@@ -33,37 +24,6 @@ const projects = {
     label:'Hum Panchi Umukt Gagan Ke', date:'',
     slug:'hum-panchi-umukt-gagan-ke',
     categories:['Narrative','Animation','Film'],
-<<<<<<< Updated upstream
-    context:'A video poem adapting Shiv Mangal Singh Suman\'s Hindi poem into a puppeteering-style animated short — full solo pipeline: narration, storyboard, assets, sound design, final video.',
-    hero: '',
-    thumbs: [],
-  },
-  p05: {
-    num:'05', label:'Zepto Satire', date:'',
-    slug: 'zepto-satire',
-    categories:['Interaction Design','Data Viz','Critique'],
-    context:'A functional dummy app that mimics Zepto\'s ordering flow but, instead of food, surfaces data about gig-workers\' health under Delhi\'s high AQI — interaction-as-critique.',
-    hero: '',
-    thumbs: [],
-  },
-  p06: {
-    num:'06', label:'Fledge', date:'',
-    slug: 'fledge',
-    categories:['Narrative','Comic','Education'],
-    context:'A bird-themed educational comic about breaking routine and facing challenges.',
-    hero: '',
-    thumbs: [],
-  },
-};
-
-const keys = ['p01','p02','p03','p04','p05','p06'];
-let cur = null;
-let snapIdx = 0;
-const cvBody     = document.getElementById('cv-body');
-const projDetail = document.getElementById('proj-detail');
-const isMobile   = () => window.innerWidth < 768;
-const imgIdx     = {};
-=======
     context:'A video poem adapting Shiv Mangal Singh Suman’s Hindi poem into a puppeteering-style animated short — full solo pipeline.',
     hero:'Content/Hum%20Panchi%20Umukt%20Gagan%20Ke/HPUMGk.png',
   },
@@ -80,7 +40,6 @@ const order = ['p01','p02','p03','p04','p05'];
 const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 let originEl = null;       // tile the detail opened from
 let currentImg = '';       // its background-image, reused on close
->>>>>>> Stashed changes
 
 function buildBento() {
   const intro = `
