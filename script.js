@@ -51,92 +51,155 @@ const projects = {
   });
 })();
 
-// ── Projects donut (landing infographic) ──
-(function buildDonut() {
-  const svg = document.getElementById('donut');
+// ── Projects radial fan (landing infographic) ──
+(function buildFan() {
+  const svg = document.getElementById('fan');
   if (!svg) return;
 
   const SVGNS = 'http://www.w3.org/2000/svg';
   const keys = Object.keys(projects);
-  const cx = 110, cy = 110, r = 80, GAP = 9;     // degrees of gap between segments
-  const seg = 360 / keys.length;                  // slice per project
-  const span = seg - GAP;
+  const n = keys.length;
+  const A0 = -90;                          // first slice boundary at the top
+  const baseSpan = 360 / n;                // equal slices when nothing is hovered
+  const EXPAND = 1.7;                      // hovered slice grows to 1.7× a normal slice
 
-  const center = document.getElementById('donut-center');
-  const defLabel = center.querySelector('.dc-label').textContent;
-  const defSub = center.querySelector('.dc-sub').textContent;
-
-  const polar = (radius, deg) => {
-    const a = (deg - 90) * Math.PI / 180;          // -90 so 0° starts at top
-    return { x: cx + radius * Math.cos(a), y: cy + radius * Math.sin(a) };
-  };
-  const arcPath = (radius, a0, a1) => {
-    const s = polar(radius, a1), e = polar(radius, a0);
-    const large = a1 - a0 <= 180 ? 0 : 1;
-    return `M ${s.x} ${s.y} A ${radius} ${radius} 0 ${large} 0 ${e.x} ${e.y}`;
+  const mk = (tag, attrs) => {
+    const el = document.createElementNS(SVGNS, tag);
+    for (const k in attrs) if (attrs[k] != null) el.setAttribute(k, attrs[k]);
+    return el;
   };
 
-  const segEls = [];
+  function build() {
+    while (svg.firstChild) svg.removeChild(svg.firstChild);
 
-  keys.forEach((k, i) => {
-    const p = projects[k];
-    const a0 = i * seg + GAP / 2;
-    const a1 = a0 + span;
-    const mid = a0 + span / 2;
+    const W = window.innerWidth, H = window.innerHeight;
+    svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+    svg.setAttribute('width', W);
+    svg.setAttribute('height', H);
 
-    const d = arcPath(r, a0, a1);
+    const C = { x: W / 2, y: H / 2 };        // hub centered on the page
+    const rCircle = 66, moat = 18, rIn = rCircle + moat;
+    const rOut = Math.hypot(W, H) + 200;     // big enough to bleed off-screen
 
-    // the visible arc
-    const path = document.createElementNS(SVGNS, 'path');
-    path.setAttribute('d', d);
-    path.setAttribute('class', 'seg');
-    path.setAttribute('pathLength', '1');          // normalize for draw-in
-    path.style.transitionDelay = (0.12 * i) + 's';
-    svg.appendChild(path);
-
-    // invisible wide hit-area on top (thin strokes are hard to hover)
-    const hit = document.createElementNS(SVGNS, 'path');
-    hit.setAttribute('d', d);
-    hit.setAttribute('class', 'seg-hit');
-    svg.appendChild(hit);
-
-    // the number label, just outside the ring
-    const num = polar(r + 18, mid);
-    const t = document.createElementNS(SVGNS, 'text');
-    t.setAttribute('x', num.x);
-    t.setAttribute('y', num.y);
-    t.setAttribute('class', 'seg-num');
-    t.setAttribute('text-anchor', 'middle');
-    t.setAttribute('dominant-baseline', 'middle');
-    t.textContent = String(i + 1).padStart(2, '0');
-    svg.appendChild(t);
-
-    const activate = (on) => {
-      path.classList.toggle('active', on);
-      t.classList.toggle('active', on);
-      center.classList.toggle('swapped', on);
-      center.querySelector('.dc-label').textContent = on ? p.title : defLabel;
-      center.querySelector('.dc-sub').textContent = on ? String(i + 1).padStart(2, '0') + ' / ' + String(keys.length).padStart(2, '0') : defSub;
+    const pt = (rad, deg) => {
+      const a = deg * Math.PI / 180;
+      return [C.x + rad * Math.cos(a), C.y + rad * Math.sin(a)];
+    };
+    const wedgePath = (a0, a1) => {
+      const [x1, y1] = pt(rIn, a0), [x2, y2] = pt(rOut, a0);
+      const [x3, y3] = pt(rOut, a1), [x4, y4] = pt(rIn, a1);
+      const large = (a1 - a0) > 180 ? 1 : 0;
+      return `M ${x1} ${y1} L ${x2} ${y2} A ${rOut} ${rOut} 0 ${large} 1 ${x3} ${y3} ` +
+             `L ${x4} ${y4} A ${rIn} ${rIn} 0 ${large} 0 ${x1} ${y1} Z`;
     };
 
-    const go = () => {
-      document.body.classList.add('leaving');
-      setTimeout(() => { location.href = `case.html?id=${k}`; }, 320);
-    };
+    const gWedge = mk('g', {}), gSep = mk('g', {}), gLabel = mk('g', {});
+    const wedges = [], labels = [], seps = [];
+    let hoverTimer = null;
 
-    [hit, t].forEach(el => {
-      el.addEventListener('pointerenter', () => activate(true));
-      el.addEventListener('pointerleave', () => activate(false));
-      el.addEventListener('click', go);
+    keys.forEach((k, i) => {
+      const w = mk('path', { class: 'wedge' });
+      w.style.transitionDelay = (0.07 * i) + 's';
+      gWedge.appendChild(w); wedges.push(w);
+
+      const t = mk('text', { class: 'wedge-label', 'dominant-baseline': 'middle' });
+      t.textContent = `${String(i + 1).padStart(2, '0')}   ${projects[k].title}`;
+      gLabel.appendChild(t); labels.push(t);
+
+      const sep = mk('line', { class: 'sep' });
+      gSep.appendChild(sep); seps.push(sep);
+
+      const go = () => {
+        document.body.classList.add('leaving');
+        setTimeout(() => { location.href = `case.html?id=${k}`; }, 320);
+      };
+      [w, t].forEach(el => {
+        el.addEventListener('pointerenter', () => {
+          clearTimeout(hoverTimer);
+          hoverTimer = setTimeout(() => focus(i), 130);   // small delay before widening
+        });
+        el.addEventListener('pointerleave', () => {
+          clearTimeout(hoverTimer);
+          focus(-1);
+        });
+        el.addEventListener('click', go);
+      });
     });
 
-    segEls.push(path);
-  });
+    const moatC = mk('circle', { cx: C.x, cy: C.y, r: rIn, class: 'moat' });
+    const hub = mk('circle', { cx: C.x, cy: C.y, r: rCircle, class: 'hub' });
+    const hubT = mk('text', {
+      x: C.x, y: C.y, class: 'hub-label',
+      'text-anchor': 'middle', 'dominant-baseline': 'middle',
+    });
+    hubT.textContent = 'Projects';
 
-  // draw the segments in
-  requestAnimationFrame(() => requestAnimationFrame(() => {
-    segEls.forEach(p => p.classList.add('drawn'));
-  }));
+    svg.append(gWedge, gSep, moatC, hub, hubT, gLabel);
+
+    // ── geometry driven by current spans (animated on hover) ──
+    let spans = keys.map(() => baseSpan);
+    let target = spans.slice();
+    let hovered = -1;
+
+    function layout() {
+      let start = A0;
+      for (let i = 0; i < n; i++) {
+        const a0 = start, a1 = start + spans[i], mid = a0 + spans[i] / 2;
+        start = a1;
+
+        wedges[i].setAttribute('d', wedgePath(a0, a1));
+
+        const [lx, ly] = pt(rIn + 24, mid);
+        const cos = Math.cos(mid * Math.PI / 180);
+        labels[i].setAttribute('x', lx);
+        labels[i].setAttribute('y', ly);
+        labels[i].setAttribute('text-anchor', cos > 0.2 ? 'start' : cos < -0.2 ? 'end' : 'middle');
+
+        const [sx1, sy1] = pt(rIn - 2, a0), [sx2, sy2] = pt(rOut, a0);
+        seps[i].setAttribute('x1', sx1); seps[i].setAttribute('y1', sy1);
+        seps[i].setAttribute('x2', sx2); seps[i].setAttribute('y2', sy2);
+      }
+    }
+
+    let raf = null;
+    function tick() {
+      let done = true;
+      for (let i = 0; i < n; i++) {
+        const d = target[i] - spans[i];
+        if (Math.abs(d) > 0.04) { spans[i] += d * 0.12; done = false; }
+        else spans[i] = target[i];
+      }
+      layout();
+      raf = done ? null : requestAnimationFrame(tick);
+    }
+
+    function focus(h) {
+      hovered = h;
+      if (h < 0) {
+        target = keys.map(() => baseSpan);
+      } else {
+        const big = baseSpan * EXPAND;
+        const rest = (360 - big) / (n - 1);
+        target = keys.map((_, i) => (i === h ? big : rest));
+      }
+      wedges.forEach((w, i) => {
+        w.classList.toggle('active', i === h);
+        w.classList.toggle('dim', h >= 0 && i !== h);
+        labels[i].classList.toggle('active', i === h);
+        labels[i].classList.toggle('dim', h >= 0 && i !== h);
+      });
+      if (!raf) raf = requestAnimationFrame(tick);
+    }
+
+    layout();
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      svg.querySelectorAll('.wedge, .wedge-label').forEach(el => el.classList.add('in'));
+    }));
+  }
+
+  build();
+  let rt;
+  window.addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(build, 160); });
 })();
 
 // ── Case-study page ──
