@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Nikhil Shah</title>
+  <title>Case Study — Nikhil Shah</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
@@ -16,19 +16,27 @@
   <span class="theme-track"><span class="theme-knob"></span></span>
 </label>
 
-<header class="masthead">
-  <h1 class="mast-name">Nikhil Shah</h1>
-  <p class="mast-role">Interaction designer — story, games, research, satire &amp; speculation.</p>
-  <p class="mast-hint">Drag the shapes. Click one to open it.</p>
-</header>
+<main class="page">
+  <a class="case-back" href="index.html">← Index</a>
 
-<!-- physics bodies (DOM cards) get injected here and synced to the simulation -->
-<main id="stage" class="stage"></main>
+  <header class="case-head">
+    <h1 id="case-title" class="case-title"></h1>
+    <p id="case-meta" class="case-meta"></p>
+    <img id="case-hero" class="case-hero" alt="">
+  </header>
 
-<!-- full-screen transition veil used when navigating to a page -->
-<div id="veil" class="veil"></div>
+  <article id="case-body" class="case-body"></article>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.19.0/matter.min.js"></script>
+  <footer class="foot">
+    <a href="index.html">← All work</a>
+    <a href="mailto:shahniku2004@gmail.com">shahniku2004@gmail.com</a>
+  </footer>
+</main>
+
+<div id="zoom" class="zoom" onclick="closeZoom()">
+  <img id="zoom-img" src="" alt="">
+</div>
+
 <script src="script.js"></script>
 </body>
 </html>
